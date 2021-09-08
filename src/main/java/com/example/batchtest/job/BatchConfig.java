@@ -1,5 +1,6 @@
 package com.example.batchtest.job;
 
+import com.example.batchtest.service.BoxOfficeApiService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.batch.core.Job;
@@ -18,6 +19,7 @@ import org.springframework.context.annotation.Configuration;
 public class BatchConfig {
     private final JobBuilderFactory jobBuilderFactory;
     private final StepBuilderFactory stepBuilderFactory;
+    private final BoxOfficeApiService boxOfficeApiService;
 
     @Bean
     public Job testJob() {
@@ -31,8 +33,7 @@ public class BatchConfig {
     public Step testStep(@Value("#{jobParameters[testParameter]}") String testParameter ) {
         return stepBuilderFactory.get("testStep")
                 .tasklet((contribution, chunkContext) -> {
-                    log.info("=====================testStep 실행===============");
-                    log.info("=====================testParameter : "+testParameter+"===============");
+                    boxOfficeApiService.insertDailyBoxOffice();
                     return RepeatStatus.FINISHED;
                 })
                 .build();
